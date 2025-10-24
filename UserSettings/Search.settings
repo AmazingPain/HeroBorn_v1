@@ -16,6 +16,9 @@ scopes = {
 	"last_search.5A656512" = "ref=\"/Player\""
 	"OpenInspectorPreview.5A656512" = "0"
 	"currentGroup.5A656512" = null
+	"last_search.8DF93126" = "Package Manager"
+	"OpenInspectorPreview.8DF93126" = "0"
+	"currentGroup.8DF93126" = "menu"
 }
 providers = {
 	find = {
@@ -72,6 +75,7 @@ providers = {
 objectSelectors = {
 }
 recentSearches = [
+	"Package Manager"
 ]
 searchItemFavorites = [
 ]
