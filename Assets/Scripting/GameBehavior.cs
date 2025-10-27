@@ -11,6 +11,14 @@ public class GameBehavior : MonoBehaviour
     public int maxItems = 4;
 
     private int _itemsCollected = 0;
+
+    public bool snowLossScreen = false;
+
+    void RestartLevel ()
+    {
+        SceneManager.LoadScene(0);
+        Time.timeScale = 1.0f;
+    }
     public int Items
     {
         get
@@ -45,6 +53,16 @@ public class GameBehavior : MonoBehaviour
         set
         {
             _playerHP = value;
+            if(_playerHP <= 0)
+            {
+                labelText = "You want another life with that?";
+                snowLossScreen =true;
+                Time.timeScale = 0;
+            }
+            else
+            {
+                labelText = "Ouch... that's got hurt";
+            }
             Debug.LogFormat("HP: {0}", _playerHP);
         }
     }
@@ -62,9 +80,23 @@ public class GameBehavior : MonoBehaviour
             if (GUI.Button(new Rect(Screen.width / 2 - 100,
                 Screen.height / 2 - 50, 200, 100), "You Won!"))
             {
+                
                 SceneManager.LoadScene(0);
 
                 Time.timeScale = 1.0f;
+
+                RestartLevel();
+            }
+        }
+
+        if (showWinScreen)
+        {
+            if (GUI.Button(new Rect(Screen.width / 2 - 100,
+                Screen.height / 2 - 50, 200, 100), "You lose..."))
+            {
+                SceneManager.LoadScene(0);
+                Time.timeScale = 1.0f;
+                RestartLevel();
             }
         }
     }
