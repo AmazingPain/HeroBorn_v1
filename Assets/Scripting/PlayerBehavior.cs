@@ -14,6 +14,9 @@ public class PlayerBehavior : MonoBehaviour
     private Rigidbody _rb;
     private CapsuleCollider _col;
     private GameBehavior _gameManager;
+
+    public delegate void JumpingEvent();
+    public event JumpingEvent playerJump;
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
@@ -55,6 +58,8 @@ public class PlayerBehavior : MonoBehaviour
             Rigidbody bulletRB = newBullet.GetComponent<Rigidbody>();
             bulletRB.velocity = this.transform.forward * bulletSpeed;
         }
+
+        playerJump();
 
     }
 

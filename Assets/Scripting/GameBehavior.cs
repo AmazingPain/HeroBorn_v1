@@ -1,8 +1,16 @@
+using CustomExstansion;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameBehavior : MonoBehaviour, IManager
 {
     private string _state;
+    public Stack<string> lootStack = new Stack<string>();
+    public Queue<string> activePlayers = new Queue<string>();
+
+    public delegate void DebugDelegate(string newText);
+
+    public DebugDelegate debug = Print;
 
     public string State
     {
@@ -12,12 +20,56 @@ public class GameBehavior : MonoBehaviour, IManager
     void Start()
     {
         Initialize();
+
+        InventoryList<string> inventoryList = new InventoryList<string>();
+
+        inventoryList.SetItem("Potion");
+        Debug.Log(inventoryList.item);
+
+
     }
+
 
     public void Initialize()
     {
         _state = "Manager initialize...";
+        _state.FancyDebug();
         Debug.Log(_state);
+
+        lootStack.Push("Sword of Doom");
+        lootStack.Push("HP+");
+        lootStack.Push("Winged Boot");
+        lootStack.Push("Golden Key");
+        lootStack.Push("Mythril Bracers");
+
+        activePlayers.Enqueue("Harrison");
+        activePlayers.Enqueue("Ford");
+        activePlayers.Enqueue("Ferrari");
+
+        debug(_state);
+        LogWithDelegate(debug);
+
+        GameObject player = GameObject.Find("Player");
+
+        PlayerBehavior playerBehavior = player.GetComponent<PlayerBehavior>();
+
+        playerBehavior.playerJump += HandlePlayerJump;
+    }
+
+    public void HandlePlayerJump()
+    {
+        debug("Player has jumped...");
+    }
+
+
+    public static void Print(string newText)
+    {
+        Debug.Log(newText);
+    }
+
+    public void LogWithDelegate(DebugDelegate del)
+    {
+        del("Delegating the debug task...");
     }
 
     public bool showWinScreen = false;
@@ -98,9 +150,40 @@ public class GameBehavior : MonoBehaviour, IManager
             if (GUI.Button(new Rect(Screen.width / 2 - 100,
                 Screen.height / 2 - 50, 200, 100), "You lose..."))
             {
-                Utilities.RestartLevel(0);
+                try
+                {
+                    Utilities.RestartLevel(-1);
+                    debug("Level restarted successfully...");
+                }
+                catch (System.ArgumentException e)
+                {
+                    Utilities.RestartLevel(0);
+                    debug("Reverting to scene 0: " + e.ToString());
+                }
+                finally
+                {
+                    debug("Restart handled...");
+                }
             }
         }
+    }
+
+    public void PrintLootReport()
+    {
+        var currentItem = lootStack.Pop();
+        var nextItem = lootStack.Peek();
+        var itemFound = lootStack.Contains("Golden Key");
+
+        Debug.LogFormat("you find a {0}!", itemFound);
+
+        Debug.LogFormat("You got a {0}!", nextItem);
+
+        Debug.LogFormat("There are {0} random loot items waiting for you!", lootStack.Count);
+
+        var currentPlayers = activePlayers.Peek();
+        Debug.LogFormat("you Player a {0}!", currentPlayers);
+
+
     }
 
 }
